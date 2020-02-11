@@ -2,6 +2,7 @@
 
 #include "BossModeGameMode.h"
 #include "UObject/ConstructorHelpers.h"
+#include "BMHUD.h"
 
 ABossModeGameMode::ABossModeGameMode() :Super() {
 
@@ -10,7 +11,7 @@ ABossModeGameMode::ABossModeGameMode() :Super() {
 
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
-
+	HUDClass = ABMHUD::StaticClass();
 }
 
 

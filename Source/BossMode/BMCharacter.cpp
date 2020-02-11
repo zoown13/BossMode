@@ -40,6 +40,9 @@ ABMCharacter::ABMCharacter()
 	FPGunMesh->bCastDynamicShadow = false;
 	FPGunMesh->CastShadow = false;
 	FPGunMesh->SetupAttachment(FPMesh, TEXT("GripPoint"));
+
+	ProjSpawn = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSpawn"));
+	ProjSpawn->SetupAttachment(FPGunMesh);
 }
 
 // Called when the game starts or when spawned
@@ -77,6 +80,16 @@ void ABMCharacter::LookUpRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+void ABMCharacter::OnFire()
+{
+	//발사체 발사 시도
+	if (ProjectileClass != nullptr) {
+		if (GetWorld() != nullptr) {
+			GetWorld()->SpawnActor<ABMProjectile>(ProjectileClass, ProjSpawn->GetComponentLocation(), ProjSpawn->GetComponentRotation());
+		}
+	}
+}
+
 // Called every frame
 void ABMCharacter::Tick(float DeltaTime)
 {
@@ -98,5 +111,6 @@ void ABMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABMCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABMCharacter::LookUpRate);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABMCharacter::OnFire);
 }
 

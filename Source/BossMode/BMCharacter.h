@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "BMProjectile.h"
 #include "BMCharacter.generated.h"
 
 UCLASS()
@@ -23,7 +24,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
 
+	//사용할 발사체 클래스
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+		TSubclassOf<ABMProjectile> ProjectileClass;
 
+	//발사체 생성
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Projectile)
+		class USceneComponent* ProjSpawn;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,6 +52,9 @@ protected:
 	* @param Rate 정규화된 속도이며 1.0이 최대 회전 속도이다.
 	*/
 	void LookUpRate(float Rate);
+
+	/** 발사체 발사하기*/
+	void OnFire();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
