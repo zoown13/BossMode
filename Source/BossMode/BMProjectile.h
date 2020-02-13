@@ -23,6 +23,8 @@ public:
 	UFUNCTION()
 		void OnDestroyedProjectile(AActor* DestroyinActor);//발사체가 사라질 때 호출
 
+	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjMovement; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

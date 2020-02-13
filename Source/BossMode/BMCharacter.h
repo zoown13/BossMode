@@ -55,6 +55,12 @@ protected:
 
 	/** 발사체 발사하기*/
 	void OnFire();
+
+	//발사체 추적대상
+	USceneComponent* TrackingSceneComponent;
+
+	//추적함수
+	void OnTrack();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

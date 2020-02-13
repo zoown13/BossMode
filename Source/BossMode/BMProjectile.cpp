@@ -47,6 +47,9 @@ ABMProjectile::ABMProjectile()
 
 	//기본적으로 3초 뒤 삭제
 	InitialLifeSpan = 3.0f;
+
+	ProjMovement->bIsHomingProjectile = true;
+	ProjMovement->HomingAccelerationMagnitude = 10000.0f;
 }
 
 void ABMProjectile::OnHit(class UPrimitiveComponent* HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)

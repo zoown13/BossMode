@@ -4,6 +4,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/Engine.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 
 // Sets default values
@@ -85,9 +87,42 @@ void ABMCharacter::OnFire()
 	//발사체 발사 시도
 	if (ProjectileClass != nullptr) {
 		if (GetWorld() != nullptr) {
-			GetWorld()->SpawnActor<ABMProjectile>(ProjectileClass, ProjSpawn->GetComponentLocation(), ProjSpawn->GetComponentRotation());
+			
+			ABMProjectile* ThisProjectile = GetWorld()->SpawnActor<ABMProjectile>(ProjectileClass, ProjSpawn->GetComponentLocation(), GetControlRotation());
+			ThisProjectile->GetProjectileMovement()->HomingTargetComponent = TrackingSceneComponent;
+				
 		}
 	}
+}
+
+void ABMCharacter::OnTrack()
+{
+	FVector MousePos;
+	FVector MouseDir;
+	FHitResult Hit;
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel2);
+	APlayerController* playerController = Cast<APlayerController>(GetController());
+
+	if (GEngine->GameViewport != nullptr && playerController != nullptr) {
+		FVector2D ScreenPos = GEngine->GameViewport->Viewport->GetSizeXY();
+
+		playerController->DeprojectScreenPositionToWorld(ScreenPos.X / 2.0f, ScreenPos.Y / 2.0f, MousePos, MouseDir);
+		MouseDir *= 100000.0f;
+
+		GetWorld()->LineTraceSingleByObjectType(Hit, MousePos, MouseDir, ObjectQueryParams);
+
+		if (Hit.bBlockingHit) {
+			UE_LOG(LogTemp, Warning, TEXT("TRACE HIT WITH %s"), *(Hit.GetActor()->GetName()));
+			TrackingSceneComponent = Cast<USceneComponent>(Hit.GetActor()->GetComponentByClass(USceneComponent::StaticClass()));
+		}
+
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("No Trace"));
+			TrackingSceneComponent = nullptr;
+		}
+	}
+
 }
 
 // Called every frame
@@ -112,5 +147,6 @@ void ABMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABMCharacter::LookUpRate);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABMCharacter::OnFire);
+	PlayerInputComponent->BindAction("Track", IE_Pressed, this, &ABMCharacter::OnTrack);
 }
 
