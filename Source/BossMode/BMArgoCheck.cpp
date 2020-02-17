@@ -48,10 +48,12 @@ void UBMArgoCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory
 		ThisController->GetBlackboard()->SetValueAsObject(TEXT("TargetToFollow"), HitOut.GetActor());
 		ThisController->GetBlackboard()->SetValueAsVector(TEXT("HomeLocation"), ThisAICharacter->GetActorLocation());
 		ThisController->GetBlackboard()->SetValueAsVector(TEXT("TargetLocation"), HitOut.GetActor()->GetActorLocation());
+		ThisController->TrackToTarget();
 
 	}
 	else {
 		ThisController->GetBlackboard()->SetValueAsObject(TEXT("TargetToFollow"), nullptr);
+		ThisController -> StopTrack();
 	}
 	
 

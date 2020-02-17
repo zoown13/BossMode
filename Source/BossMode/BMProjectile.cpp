@@ -5,6 +5,9 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "BMBossCharacter.h"
+#include "GameFramework/DamageType.h"
+#include "Engine/World.h"
 
 // Sets default values
 ABMProjectile::ABMProjectile()
@@ -54,6 +57,12 @@ ABMProjectile::ABMProjectile()
 
 void ABMProjectile::OnHit(class UPrimitiveComponent* HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
+	if (OtherActor->GetClass()->IsChildOf(ABMBossCharacter::StaticClass())) {
+		FDamageEvent DamagaeEvent(UDamageType::StaticClass());
+		OtherActor->TakeDamage(10.0f, DamagaeEvent,GetWorld()->GetFirstPlayerController(),this);
+	}
+
+
 	if (!OtherActor->GetClass()->IsChildOf(this->StaticClass())) {
 
 		ProjCollision->SetCollisionProfileName(TEXT("NoCollision"));
